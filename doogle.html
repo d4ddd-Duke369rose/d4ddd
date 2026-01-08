@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>doogle - 杜谷搜索</title>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        /* 暗黑/亮色模式变量 */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #202124;
+            --search-bg: #fff;
+            --search-border: #dfe1e5;
+            --search-hover: #f8f9fa;
+            --btn-bg: #f8f9fa;
+            --btn-text: #3c4043;
+            --link-color: #1a0dab;
+            --gradient: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335);
+        }
+
+        .dark-mode {
+            --bg-color: #202124;
+            --text-color: #e8eaed;
+            --search-bg: #303134;
+            --search-border: #5f6368;
+            --search-hover: #383838;
+            --btn-bg: #303134;
+            --btn-text: #e8eaed;
+            --link-color: #8ab4f8;
+            --gradient: linear-gradient(135deg, #4d8bf8, #37b259, #fdd234, #ed5647);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease;
+        }
+
+        /* 顶部导航 */
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            padding: 16px;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer; /* 新增：让Dmail看起来可点击 */
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        .mode-toggle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+        }
+
+        .mode-toggle:hover {
+            background-color: var(--search-hover);
+        }
+
+        /* 主内容区 */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Logo样式 */
+        .logo {
+            font-size: 80px;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            letter-spacing: -5px;
+        }
+
+        /* 搜索框容器 */
+        .search-container {
+            width: 100%;
+            max-width: 584px;
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .search-box {
+            width: 100%;
+            height: 48px;
+            padding: 0 40px;
+            border: 1px solid var(--search-border);
+            border-radius: 24px;
+            background-color: var(--search-bg);
+            color: var(--text-color);
+            font-size: 16px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-box:hover, .search-box:focus {
+            background-color: var(--search-hover);
+            box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+            border-color: transparent;
+        }
+
+        /* 搜索图标 */
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9aa0a6;
+            font-size: 20px;
+        }
+
+        /* 搜索按钮 */
+        .search-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .search-btn {
+            padding: 10px 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .search-btn:hover {
+            border-color: var(--search-border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* 快捷链接 */
+        .shortcuts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .shortcut-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80px;
+            padding: 12px 8px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .shortcut-item:hover {
+            background-color: var(--search-hover);
+        }
+
+        .shortcut-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #f1f3f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            font-size: 20px;
+            color: #5f6368;
+        }
+
+        .shortcut-text {
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 底部 */
+        .footer {
+            padding: 16px;
+            text-align: center;
+            font-size: 12px;
+            color: #70757a;
+        }
+
+        /* 自定义弹窗样式 */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup {
+            background-color: var(--bg-color);
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .popup-text {
+            font-size: 16px;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .popup-btn {
+            padding: 10px 24px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .popup-btn.confirm {
+            background-color: #4285f4;
+            color: white;
+        }
+
+        .popup-btn.redirect {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: 1px solid var(--search-border);
+        }
+
+        .popup-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 600px) {
+            .logo {
+                font-size: 60px;
+            }
+            .search-container {
+                max-width: 90%;
+            }
+            .search-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+    <!-- 引入图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="header">
+        <a id="dmailLink">Dmail</a> <!-- 移除href，改为id用于绑定事件 -->
+        <a href="#">图片</a>
+        <button class="mode-toggle" id="modeToggle">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main">
+        <div class="logo">doogle</div>
+        
+        <!-- 搜索框 -->
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-box" id="searchBox" placeholder="输入搜索内容...">
+        </div>
+
+        <!-- 搜索按钮 -->
+        <div class="search-buttons">
+            <button class="search-btn" id="searchBtn">杜谷搜索</button> <!-- 改为杜谷搜索 -->
+            <button class="search-btn" id="luckyBtn">我很幸运</button>
+        </div>
+
+        <!-- 快捷链接 -->
+        <div class="shortcuts">
+            <a href="#" class="shortcut-item">
+                <div class="shortcut-icon"><i class="fas fa-video"></i></div>
+                <div class="shortcut-text">视频</div>
+            </a>
+            <a href="#" class="shortcut-item">
+                <div class="shortcut-icon"><i class="fas fa-newspaper"></i></div>
+                <div class="shortcut-text">新闻</div>
+            </a>
+            <a href="#" class="shortcut-item">
+                <div class="shortcut-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <div class="shortcut-text">地图</div>
+            </a>
+            <a href="#" class="shortcut-item">
+                <div class="shortcut-icon"><i class="fas fa-shopping-cart"></i></div>
+                <div class="shortcut-text">购物</div>
+            </a>
+            <a href="#" class="shortcut-item">
+                <div class="shortcut-icon"><i class="fas fa-music"></i></div>
+                <div class="shortcut-text">音乐</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- 底部 -->
+    <div class="footer">
+        © 2026 doogle - 杜谷搜索 | 更酷的搜索体验 仅供娱乐<!-- 改为杜谷搜索 -->
+    </div>
+
+    <!-- 自定义弹窗 -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup">
+            <div class="popup-text">不支持位于地球的服务，请迁移到太阳后再连接！#F003月球服务器</div>
+            <div class="popup-buttons">
+                <button class="popup-btn confirm" id="closePopup">确定</button>
+                <button class="popup-btn redirect" id="redirectBtn">获取地球上的服务</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dmail专属弹窗（样式和主弹窗一致，仅跳转链接不同） -->
+    <div class="popup-overlay" id="dmailPopupOverlay">
+        <div class="popup">
+            <div class="popup-text">不支持位于地球的服务，请迁移到太阳后再连接！#F003月球服务器</div>
+            <div class="popup-buttons">
+                <button class="popup-btn confirm" id="closeDmailPopup">确定</button>
+                <button class="popup-btn redirect" id="dmailRedirectBtn">获取地球上的服务</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. 暗黑模式切换
+        const modeToggle = document.getElementById('modeToggle');
+        const body = document.body;
+        const moonIcon = modeToggle.querySelector('i');
+
+        modeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                moonIcon.classList.remove('fa-moon');
+                moonIcon.classList.add('fa-sun');
+            } else {
+                moonIcon.classList.remove('fa-sun');
+                moonIcon.classList.add('fa-moon');
+            }
+        });
+
+        // 2. 通用弹窗控制函数
+        function showPopup(popupId) {
+            document.getElementById(popupId).classList.add('active');
+        }
+
+        function closePopup(popupId) {
+            document.getElementById(popupId).classList.remove('active');
+        }
+
+        // 3. 主搜索弹窗逻辑
+        const searchBox = document.getElementById('searchBox');
+        const searchBtn = document.getElementById('searchBtn');
+        const luckyBtn = document.getElementById('luckyBtn');
+        const closePopupBtn = document.getElementById('closePopup');
+        const redirectBtn = document.getElementById('redirectBtn');
+        const popupOverlay = document.getElementById('popupOverlay');
+
+        // 搜索按钮/回车触发主弹窗
+        searchBtn.addEventListener('click', () => showPopup('popupOverlay'));
+        luckyBtn.addEventListener('click', () => showPopup('popupOverlay'));
+        searchBox.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') showPopup('popupOverlay');
+        });
+
+        // 主弹窗关闭/跳转
+        closePopupBtn.addEventListener('click', () => closePopup('popupOverlay'));
+        redirectBtn.addEventListener('click', () => {
+            window.location.href = "https://www.google.com.hk/intl/zh-CN/";
+        });
+
+        // 点击主弹窗外层关闭
+        popupOverlay.addEventListener('click', (e) => {
+            if (e.target === popupOverlay) closePopup('popupOverlay');
+        });
+
+        // 4. Dmail弹窗逻辑
+        const dmailLink = document.getElementById('dmailLink');
+        const closeDmailPopupBtn = document.getElementById('closeDmailPopup');
+        const dmailRedirectBtn = document.getElementById('dmailRedirectBtn');
+        const dmailPopupOverlay = document.getElementById('dmailPopupOverlay');
+
+        // 点击Dmail触发专属弹窗
+        dmailLink.addEventListener('click', () => showPopup('dmailPopupOverlay'));
+
+        // Dmail弹窗关闭/跳转（跳转到Google邮箱）
+        closeDmailPopupBtn.addEventListener('click', () => closePopup('dmailPopupOverlay'));
+        dmailRedirectBtn.addEventListener('click', () => {
+            window.location.href = "https://mail.google.com/";
+        });
+
+        // 点击Dmail弹窗外层关闭
+        dmailPopupOverlay.addEventListener('click', (e) => {
+            if (e.target === dmailPopupOverlay) closePopup('dmailPopupOverlay');
+        });
+    </script>
+</body>
+</html>
