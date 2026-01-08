@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>d4ddd - 官方介绍</title>
+    <!-- 引入Tailwind CSS实现样式（CDN方式） -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1', // 主色调（紫色系）
+                        secondary: '#10B981', // 辅助色（绿色系）
+                        dark: '#1F2937', // 深色文本
+                        light: '#F3F4F6', // 浅色背景
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .bg-gradient {
+                background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+            }
+            /* 弹窗遮罩层动画 */
+            .modal-fade-in {
+                animation: fadeIn 0.3s ease-in-out;
+            }
+            /* 弹窗内容动画 */
+            .modal-slide-in {
+                animation: slideIn 0.3s ease-in-out;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes slideIn {
+                from { transform: translateY(-20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+        }
+    </style>
+</head>
+<body class="font-sans text-dark bg-white">
+    <!-- 导航栏 -->
+    <header class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-sm shadow-sm">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-primary">d4ddd</a>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#home" class="font-medium hover:text-primary transition-colors">首页</a>
+                <a href="#features" class="font-medium hover:text-primary transition-colors">核心优势</a>
+                <a href="#about" class="font-medium hover:text-primary transition-colors">关于我们</a>
+                <a href="#contact" class="font-medium hover:text-primary transition-colors">联系我们</a>
+            </nav>
+            <!-- 移动端菜单按钮 -->
+            <button class="md:hidden text-dark hover:text-primary" id="menuBtn">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+        <!-- 移动端菜单 -->
+        <div class="md:hidden hidden bg-white shadow-lg absolute w-full" id="mobileMenu">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-4">
+                <a href="#home" class="py-2 font-medium hover:text-primary transition-colors">首页</a>
+                <a href="#features" class="py-2 font-medium hover:text-primary transition-colors">核心优势</a>
+                <a href="#about" class="py-2 font-medium hover:text-primary transition-colors">关于我们</a>
+                <a href="#contact" class="py-2 font-medium hover:text-primary transition-colors">联系我们</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 赞助者弹窗 (默认隐藏) -->
+    <div id="sponsorModal" class="fixed inset-0 bg-black/50 z-90 flex items-center justify-center hidden modal-fade-in">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-8 modal-slide-in">
+            <div class="text-center mb-6">
+                <i class="fas fa-hand-holding-heart text-4xl text-primary mb-4"></i>
+                <h3 class="text-2xl font-bold mb-2">成为赞助者</h3>
+                <p class="text-gray-600">请先联系我们以获得您的专属赞助链接</p>
+            </div>
+            <div class="flex space-x-4">
+                <button id="modalConfirmBtn" class="flex-1 bg-primary text-white py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                    确定
+                </button>
+                <button id="modalDonateBtn" class="flex-1 bg-gray-200 text-dark py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors">
+                    无偿赞助
+                </button>
+            </div>
+            <!-- 关闭按钮 -->
+            <button id="modalCloseBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 英雄区（首页） -->
+    <section id="home" class="pt-32 pb-20 bg-light">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold leading-tight text-shadow mb-6">
+                    欢迎来到 <span class="text-primary">d4ddd</span>
+                </h1>
+                <p class="text-lg text-gray-700 mb-8 max-w-lg">
+                    d4ddd 是一个便捷可靠、低成本、支持个性化定制的平台！基础服务全免费，高级服务可积分兑换，开源透明且24小时维护，还能实现你的各种创意想法！
+                </p>
+                <div class="flex space-x-4">
+                    <a href="#features" class="bg-primary text-white px-8 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                        了解优势
+                    </a>
+                    <a href="#contact" class="border border-primary text-primary px-8 py-3 rounded-lg font-medium hover:bg-primary/10 transition-colors">
+                        提交想法
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2">
+                <img src="https://picsum.photos/800/600" alt="d4ddd 平台展示" class="rounded-xl shadow-2xl w-full object-cover">
+            </div>
+        </div>
+    </section>
+
+    <!-- 核心优势区 -->
+    <section id="features" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">核心优势</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">d4ddd 拥有四大核心优势，为你带来高性价比的优质使用体验</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- 优势卡片1：方便快捷 -->
+                <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-bolt text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">方便快捷</h3>
+                    <p class="text-gray-600">极简的操作流程，无需复杂学习，一键直达核心功能，让你用最少的步骤完成目标，节省时间成本。</p>
+                </div>
+                <!-- 优势卡片2：公共可靠 -->
+                <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-shield-halved text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">公共可靠</h3>
+                    <p class="text-gray-600">绝大多数网页代码均开源在 GitHub 平台，透明可查；专业程序员团队24小时维护系统，保障稳定运行。</p>
+                </div>
+                <!-- 优势卡片3：想法多样 -->
+                <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-lightbulb text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">想法多样</h3>
+                    <p class="text-gray-600">你可以随时留言提出创意想法，我们会将其落地实现；更有丰富的 DIY 功能，让你自定义专属使用体验。</p>
+                </div>
+                <!-- 优势卡片4：低成本 -->
+                <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-coins text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">低成本</h3>
+                    <p class="text-gray-600">基础服务全部免费，80%带PLUS标签的高级服务可通过签到等任务积攒积分兑换，资金来源可靠有保障。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于我们区 -->
+    <section id="about" class="py-20 bg-light">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2">
+                    <img src="https://picsum.photos/700/500" alt="关于d4ddd" class="rounded-xl shadow-lg w-full object-cover">
+                </div>
+                <div class="md:w-1/2">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6">关于 d4ddd</h2>
+                    <p class="text-gray-700 mb-4">
+                        d4ddd 是一个以「便捷、可靠、低成本、创新」为核心的平台，我们坚持开源透明的理念，由专业技术团队24小时保障系统稳定，同时打造零门槛的使用体验。
+                    </p>
+                    <p class="text-gray-700 mb-6">
+                        我们承诺基础服务永久免费，高级服务以积分兑换为主，平台运营资金全部来自资源团队和为爱发电的赞助者，无需向用户收费，真正做到低成本甚至零成本使用。同时我们鼓励用户参与产品共创，让每一个创意都有落地的可能。
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-secondary mr-3"></i>
+                            <span>开源透明的技术理念</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-secondary mr-3"></i>
+                            <span>7×24小时专业运维保障</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-secondary mr-3"></i>
+                            <span>零门槛低成本使用模式</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-secondary mr-3"></i>
+                            <span>用户共创的产品模式</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系我们区 -->
+    <section id="contact" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">联系我们</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">有创意想法想要实现？或想成为赞助者？欢迎随时联系我们</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <!-- 联系信息 -->
+                <div>
+                    <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                        <h3 class="text-xl font-bold mb-6">联系方式</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mr-4 shrink-0">
+                                    <i class="fas fa-envelope text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium mb-1">邮箱</h4>
+                                    <p class="text-gray-600">contact@d4ddd.com</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mr-4 shrink-0">
+                                    <i class="fas fa-phone text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium mb-1">电话</h4>
+                                    <p class="text-gray-600">+86 18909253860</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mr-4 shrink-0">
+                                    <i class="fab fa-github text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium mb-1">GitHub</h4>
+                                    <p class="text-gray-600">https://github.com/d4ddd-Duke369rose/d4ddd</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mr-4 shrink-0">
+                                    <i class="fas fa-hand-holding-heart text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium mb-1">赞助支持</h4>
+                                    <p class="text-gray-600">support@d4ddd.com</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- 社交媒体 -->
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <h3 class="text-xl font-bold mb-6">关注我们</h3>
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                                <i class="fab fa-weixin text-primary hover:text-white"></i>
+                            </a>
+                            <a href="https://github.com/d4ddd-Duke369rose" target="_blank" class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                                <i class="fab fa-github text-primary hover:text-white"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 联系表单（创意提交） -->
+                <div>
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <h3 class="text-xl font-bold mb-6">提交你的创意想法</h3>
+                        <form id="ideaForm">
+                            <div class="mb-4">
+                                <label for="name" class="block text-gray-700 mb-2">姓名</label>
+                                <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入你的姓名">
+                            </div>
+                            <div class="mb-4">
+                                <label for="email" class="block text-gray-700 mb-2">邮箱</label>
+                                <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请输入你的邮箱">
+                            </div>
+                            <div class="mb-4">
+                                <label for="message" class="block text-gray-700 mb-2">你的创意想法</label>
+                                <textarea id="message" rows="5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="请详细描述你的创意，我们会认真评估并尽力实现！也可留言成为赞助者的想法"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                                提交创意
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h4 class="text-xl font-bold mb-4">d4ddd</h4>
+                    <p class="text-gray-400">便捷可靠，低成本，创意无限，由你定义！</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-medium mb-4">快速链接</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#home" class="hover:text-white transition-colors">首页</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">核心优势</a></li>
+                        <li><a href="#about" class="hover:text-white transition-colors">关于我们</a></li>
+                        <li><a href="#contact" class="hover:text-white transition-colors">提交创意</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-medium mb-4">资源</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="https://github.com/d4ddd-Duke369rose/d4ddd" target="_blank" class="hover:text-white transition-colors">GitHub 开源地址</a></li>
+                        <li><a href="https://d4ddd.net/help/points.html" class="hover:text-white transition-colors">积分获取指南</a></li>
+                        <li><a href="https://d4ddd.net/help/diy.html" class="hover:text-white transition-colors">DIY 功能教程</a></li>
+                        <li><a href="#" id="sponsorLink" class="hover:text-white transition-colors">成为赞助者</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-medium mb-4">订阅更新</h4>
+                    <p class="text-gray-400 mb-4">订阅我们的更新，第一时间获取新功能和积分活动通知</p>
+                    <div class="flex" id="subscribeForm">
+                        <input type="email" placeholder="你的邮箱地址" class="px-4 py-2 rounded-l-lg w-full bg-gray-800 border-0 focus:outline-none focus:ring-1 focus:ring-primary text-white">
+                        <button class="bg-primary px-4 py-2 rounded-r-lg hover:bg-primary/90 transition-colors">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-500">
+                <p>© 2025 d4ddd. 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors opacity-0 invisible">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript -->
+    <script>
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 回到顶部按钮
+        const backToTopBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.remove('opacity-0', 'invisible');
+                backToTopBtn.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopBtn.classList.add('opacity-0', 'invisible');
+                backToTopBtn.classList.remove('opacity-100', 'visible');
+            }
+        });
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // 关闭移动端菜单（如果打开）
+                    mobileMenu.classList.add('hidden');
+                    // 计算滚动位置（考虑导航栏高度）
+                    const headerHeight = document.querySelector('header').offsetHeight;
+                    const targetPosition = targetElement.offsetTop - headerHeight;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 导航栏滚动效果
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('py-2');
+                header.classList.remove('py-4');
+            } else {
+                header.classList.add('py-4');
+                header.classList.remove('py-2');
+            }
+        });
+
+        // 赞助者弹窗功能
+        const sponsorModal = document.getElementById('sponsorModal');
+        const sponsorLink = document.getElementById('sponsorLink');
+        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+        const modalDonateBtn = document.getElementById('modalDonateBtn');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+
+        // 打开弹窗
+        sponsorLink.addEventListener('click', (e) => {
+            e.preventDefault(); // 阻止默认链接行为
+            sponsorModal.classList.remove('hidden');
+            // 禁止背景滚动
+            document.body.style.overflow = 'hidden';
+        });
+
+        // 关闭弹窗
+        function closeModal() {
+            sponsorModal.classList.add('hidden');
+            // 恢复背景滚动
+            document.body.style.overflow = '';
+        }
+
+        // 确定按钮 - 跳转到联系我们
+        modalConfirmBtn.addEventListener('click', () => {
+            closeModal();
+            // 平滑滚动到联系我们区域
+            const contactSection = document.getElementById('contact');
+            const headerHeight = document.querySelector('header').offsetHeight;
+            const targetPosition = contactSection.offsetTop - headerHeight;
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        });
+
+        // 无偿赞助按钮 - 预留功能
+        modalDonateBtn.addEventListener('click', () => {
+            alert('无偿赞助功能正在开发中，敬请期待！');
+            // 可在此处后续添加实际的赞助逻辑
+        });
+
+        // 关闭按钮
+        modalCloseBtn.addEventListener('click', closeModal);
+
+        // 点击遮罩层关闭弹窗
+        sponsorModal.addEventListener('click', (e) => {
+            if (e.target === sponsorModal) {
+                closeModal();
+            }
+        });
+
+        // ESC键关闭弹窗
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !sponsorModal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+
+        // 提交创意表单提交事件
+        const ideaForm = document.getElementById('ideaForm');
+        ideaForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // 阻止表单默认提交
+            alert('人机验证服务加载失败！(#1003)');
+        });
+
+        // 订阅更新表单提交事件
+        const subscribeForm = document.getElementById('subscribeForm');
+        const subscribeBtn = subscribeForm.querySelector('button');
+        subscribeBtn.addEventListener('click', function(e) {
+            e.preventDefault(); // 阻止默认行为
+            alert('人机验证服务加载失败！(#1003)');
+        });
+    </script>
+</body>
+</html>
